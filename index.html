@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Y ❤️ Shiksha</title>
+
 <style>
 body{
 margin:0;height:100vh;overflow:hidden;
@@ -11,46 +12,64 @@ background:url('photo1.jpeg') center/cover no-repeat;
 font-family:Arial,sans-serif;color:white;
 transition:background-image 1s;
 }
+
 .overlay{
 height:100vh;background:rgba(0,0,0,.35);
 display:flex;flex-direction:column;align-items:center;justify-content:center;
 text-align:center;
 }
+
 h1{font-size:48px;margin:10px}
 #question{font-size:32px;margin:10px}
+
 button{
 padding:14px 28px;border:none;border-radius:30px;
 font-size:20px;cursor:pointer;margin:10px;
+z-index:10;
+position:relative;
 }
+
 #yesBtn{background:#ff4081;color:white}
 #noBtn{background:#666;color:white;position:absolute}
+
 #ageBox{
 position:fixed;bottom:20px;left:20px;
-font-size:24px;font-weight:bold;
+font-size:18px;font-weight:bold;
 background:rgba(0,0,0,.45);
 padding:12px 18px;border-radius:15px;
 }
+
 .balloon{
 position:fixed;font-size:40px;
 animation:pop 1.5s forwards;
 }
+
 @keyframes pop{
 0%{transform:translateY(0) scale(1);opacity:1}
 100%{transform:translateY(-200px) scale(2);opacity:0}
 }
 </style>
 </head>
+
 <body>
+
 <div class="overlay">
 <h1>Y ❤️ Shiksha</h1>
+
 <h2 id="question">Do you love me, Shiksha? ❤️</h2>
+
 <div>
-<button id="yesBtn" onclick="nextQuestion()">Yes ❤️</button>
+<button id="yesBtn">Yes ❤️</button>
 <button id="noBtn">No 💔</button>
 </div>
 </div>
 
-<div id="ageBox"></div>=
+<div id="ageBox"></div>
+
+<!-- AUDIO FIX (optional but needed) -->
+<audio id="bgMusic" loop>
+<source src="song.mp3" type="audio/mp3">
+</audio>
 
 <script>
 const questions=[
@@ -63,6 +82,13 @@ const questions=[
 ];
 
 let q=0;
+
+const yesBtn=document.getElementById("yesBtn");
+const noBtn=document.getElementById("noBtn");
+const question=document.getElementById("question");
+
+yesBtn.addEventListener("click",nextQuestion);
+
 function balloons(){
 for(let i=0;i<20;i++){
 const b=document.createElement("div");
@@ -77,44 +103,68 @@ setTimeout(()=>b.remove(),1500);
 
 function nextQuestion(){
 document.getElementById("bgMusic").play().catch(()=>{});
+
 balloons();
+
 q++;
+
 if(q<questions.length){
-document.getElementById("question").innerText=questions[q];
-}else{
-document.body.innerHTML=`<div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#ff758c,#ff7eb3);color:white">
+question.innerText=questions[q];
+}
+else{
+document.body.innerHTML=`
+<div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+background:linear-gradient(135deg,#ff758c,#ff7eb3);color:white">
 <h1>🎉 Y ❤️ Shiksha Forever 🎉</h1>
-<h2>I Love You ❤️</h2></div>`;
+<h2>I Love You ❤️</h2>
+</div>`;
 }
 }
 
-const noBtn=document.getElementById("noBtn");
+// NO button escape
 noBtn.addEventListener("mouseover",()=>{
 noBtn.style.left=Math.random()*(window.innerWidth-120)+"px";
 noBtn.style.top=Math.random()*(window.innerHeight-80)+"px";
 });
 
+// Background slideshow
 const photos=[];
-for(let i=1;i<=20;i++) photos.push(`photo${i}.jpeg`);
+for(let i=1;i<=20;i++){
+photos.push(`photo${i}.jpeg`);
+}
+
 let p=0;
 setInterval(()=>{
 p=(p+1)%photos.length;
 document.body.style.backgroundImage=`url('${photos[p]}')`;
 },3000);
 
+// Age counter
 function updateAge(){
 const birth=new Date("2008-01-03T00:00:00");
 const now=new Date();
+
 let years=now.getFullYear()-birth.getFullYear();
 let months=now.getMonth()-birth.getMonth();
 let days=now.getDate()-birth.getDate();
-if(days<0){months--;days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
-if(months<0){years--;months+=12;}
-document.getElementById("ageBox").innerHTML=
-`🎂 Shiksha Age<br>${years} Years ${months} Months ${days} Days<br>${now.getHours()} Hours ${now.getMinutes()} Minutes ${now.getSeconds()} Seconds`;
+
+if(days<0){
+months--;
+days+=new Date(now.getFullYear(),now.getMonth(),0).getDate();
 }
+if(months<0){
+years--;
+months+=12;
+}
+
+document.getElementById("ageBox").innerHTML=
+`🎂 Shiksha Age<br>${years} Years ${months} Months ${days} Days<br>
+${now.getHours()}h ${now.getMinutes()}m ${now.getSeconds()}s`;
+}
+
 setInterval(updateAge,1000);
 updateAge();
 </script>
+
 </body>
 </html>
